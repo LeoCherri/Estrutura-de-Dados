@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Converter CSV em Array</title>
+</head>
+<body>
+    <input type="file" id="arquivo_html">
+    <pre id="saida_csv"></pre>
+
+    <script>
+        document.getElementById('arquivo_html').addEventListener('change', function(event) {
+            const arquivo = event.target.files[0];
+            const leitor = new FileReader();
+
+            leitor.onload = function(event) {
+                const conteudoArquivo = event.target.result;
+                // Coloca cada linha do texto em uma posição de um array
+                const linhas = conteudoArquivo.split('\n');
+                const arrayDados = [];
+
+                var concluidos = 0, inscritos = 0, cancelados = 0, diferentes = 0;
+
+                // Percorre o array com as linhas do arquivo
+                for (let i = 0; i < linhas.length; i++) {
+                    // Separa cada item da linha em uma posição de um array
+                    const linha = linhas[i].trim().split(',');
+
+
+                    //Alterar formato da DATA
+                    //Iniciamos criando um objeto da classe Date no JS
+                    //passando o valor da data no CSV.
+
+                    const dataCSV = new Date(linha[1]); //1 => Data do convite
+
+                    //Agora vamos alterar o conteudo da posição da data no array 
+                    //Usando a função totalDateString(data, idioma)
+                    //https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Date
+                    if(linha[1] != 'DATA DO CONVITE'){
+                        linha[1] = dataCSV.toLocaleDateString('pt-BR')
+                        console.log(dataCSV)} 
+
+                    if(linha[3] != 'DATA DE INSCRIÇÃO'){
+                        linha[3] = dataCSV.toLocaleDateString('pt-BR')
+                        console.log(dataCSV)}
+
+                        
+                    // Adiciona o array dos itens da linha no array final
+                    arrayDados[i] = linha;
+
+                     if(linha[2] == 'INSCRITO'){
+                         inscritos++;
+                     }else if(linha[2] == 'CURSO CONCLUÍDO'){
+                         concluidos++;
+                     }else if(linha[2] == 'INSCRIÇÃO CANCELADA'){
+                         cancelados++;
+                     }else{
+                         console.log(linha[2]);
+                         diferentes++;
+                     }
+
+                }
+
+                console.log(arrayDados); // Exibe o array no console
+                // Exibe o arrray no HTML                          Converte o array em texto
+                document.getElementById('saida_csv').textContent = JSON.stringify(arrayDados, null, 2);
+            }
+
+            leitor.readAsText(arquivo);
+        });
+    </script>
+</body>
+</html>
